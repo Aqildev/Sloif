@@ -1,26 +1,56 @@
 import React, { useState, useEffect } from 'react'
 import { NoderedUtil } from '@openiap/openflow-api'
 import { QueryCall } from '../../Helper/OpenFlowCalls'
-import { Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
+import { Button,TextField,MenuItem, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import { getGridDateOperators } from '@mui/x-data-grid'
 export default function Activities(props) {
+    const getPipeline = async () => {
+        let pipeline = await QueryCall('pipedrive', { "_type": "pipeline" }, 0, 20, { 'id': 1 })
+        console.log(pipeline)
+        setPipelineData(pipeline)
 
+    }
+    const getData=async()=>{
+        let deals=await QueryCall('pipedrive',{'pipeline_id':pipeline_id},null,null,{"id":1})
+        console.log(deals)
+
+    }
+const [pipeline_id,setPipeline_id]=useState()
+const [pipelineData,setPipelineData]=useState()
     const [Activities, setActivities] = useState()
-    const [propdata, setPropData] = useState(props? props.location?props.location.data?props.location.data:null:null:null)
+    const [propdata, setPropData] = useState(props ? props.location ? props.location.data ? props.location.data : null : null : null)
     const [page, setPage] = useState(0)
     const getActivities = async () => {
-        let data = await QueryCall('entities', { "_type": "activity","done":true }, page, 20)
+        let data = await QueryCall('entities', { "_type": "activity", "done": true }, page, 20)
         setActivities(data)
 
         console.log(data)
         console.log(page)
     }
     useEffect(() => {
+        getPipeline()
+    },[])
+    useEffect(() => {
         getActivities()
     }, [page])
+    useEffect(()=>{
+        getData()
+    },[pipeline_id])
     if (Activities)
         return (
             <Container>
+                <TextField select value={pipeline_id} onChange={(e) => setPipeline_id(e.target.value)}>
+                    {pipelineData.map((option) =>
+                    (
+                        <MenuItem key={option.id} value={option.id}>
+                            {option.id}
+                        </MenuItem>
+
+                    )
+                    )}
+                </TextField>
+
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -57,7 +87,7 @@ export default function Activities(props) {
                                         <TableCell align="center">{activity.done ? done_time[1] : 'N/A'}</TableCell>
                                         <TableCell align="center">{activity._status ? activity._status : 'N/A'}</TableCell>
                                         <TableCell align="center">{activity._category ? activity._category : 'N/A'}</TableCell>
-                                        <TableCell align="center"><Link to={{pathname:'/ActivitiesEdit',data:[activity,propdata]}}><Button variant="contained" color="primary">Edit</Button></Link></TableCell>
+                                        <TableCell align="center"><Link to={{ pathname: '/ActivitiesEdit', data: [activity, propdata] }}><Button variant="contained" color="primary">Edit</Button></Link></TableCell>
 
                                     </TableRow>
                                 )

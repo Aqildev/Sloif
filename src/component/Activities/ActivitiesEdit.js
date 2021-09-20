@@ -31,6 +31,7 @@ export default function ActivitiesEdit(props) {
 
     let cat
     let data = props.location.data[0]
+    const [disable,setDisable]=useState(data._status? false:true)
     const [propdata, setPropData] = useState(props.location.data[1])
     const [categoriesdata, setCategoriesData] = useState(props.location.data[1])
     console.log(propdata)
@@ -41,7 +42,7 @@ export default function ActivitiesEdit(props) {
     const [Activitiesdata, setActivitiesdata] = useState()
     const [status, setstatus] = useState(data ?data._status ? data._status : null :null)
     const [category, setCategory] = useState(data ? data._category ? data._category : null:null)
-    let statuss = ['Colleague', 'responsible', 'no answer', 'answering machine']
+    let statuss = ['Colleague', 'responsible', 'no answer', 'answering machine','something we have done','no data']
     let [addCategory, setAddCategory] = useState()
     // let [categories, setCategories]= useState(data ?data.categories?data.categories:[] :[])
     let [categories, setCategories]= useState()
@@ -98,6 +99,13 @@ export default function ActivitiesEdit(props) {
        console.log("hi")
 
     },[])
+    useEffect (()=>{
+        if(status &&  status!=='no data')
+        setDisable(false)
+        else
+        setDisable(true)
+    },[status])
+    
     // useEffect(()=>{
     //     console.log(categories)
 
@@ -129,6 +137,7 @@ export default function ActivitiesEdit(props) {
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             helperText=""
+                            disabled={disable}
                         >
                             {categories.map((option) => {
                                 console.log(option)

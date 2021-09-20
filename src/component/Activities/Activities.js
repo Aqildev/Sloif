@@ -9,7 +9,7 @@ export default function Activities(props) {
     const [propdata, setPropData] = useState(props? props.location?props.location.data?props.location.data:null:null:null)
     const [page, setPage] = useState(0)
     const getActivities = async () => {
-        let data = await QueryCall('entities', { "_type": "activity" }, page, 20)
+        let data = await QueryCall('entities', { "_type": "activity","done":true }, page, 20)
         setActivities(data)
 
         console.log(data)
